@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter - ToolNova</title>
+    <meta name="description" content="Count words, characters, sentences, and paragraphs. Get detailed text statistics instantly.">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="section container">
+        <a href="../index.html" class="back-link">← Back to Tools</a>
+
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>📝 Word Counter</h1>
+                <p>Analyze your text and get detailed statistics</p>
+            </div>
+
+            <div class="tool-form">
+                <div class="form-group">
+                    <label for="textInput">Enter Your Text</label>
+                    <textarea id="textInput" placeholder="Paste or type your text here..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="button" onclick="analyzeText()">Analyze Text</button>
+                    <button class="button button-secondary" onclick="clearText()">Clear</button>
+                    <button class="button button-success" onclick="downloadTextStats()">📥 Download Stats</button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div id="statsOutput" class="output-section">
+                <h3>Text Statistics</h3>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="wordCount">0</div>
+                        <div class="stat-label">Words</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="charCount">0</div>
+                        <div class="stat-label">Characters (with spaces)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="charCountNoSpace">0</div>
+                        <div class="stat-label">Characters (no spaces)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="sentenceCount">0</div>
+                        <div class="stat-label">Sentences</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="paragraphCount">0</div>
+                        <div class="stat-label">Paragraphs</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="readingTime">0 min</div>
+                        <div class="stat-label">Reading Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="avgWordLength">0</div>
+                        <div class="stat-label">Avg. Word Length</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="longestWord">-</div>
+                        <div class="stat-label">Longest Word</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis -->
+            <div id="detailedOutput" class="output-section">
+                <h3>Detailed Analysis</h3>
+                <div class="output-content" id="detailedStats"></div>
+            </div>
+
+            <!-- Top Words -->
+            <div id="topWordsOutput" class="output-section">
+                <h3>Top 10 Words</h3>
+                <div id="topWordsList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About This Tool</h4>
+                    <p style="color: #cbd5e1;">Get detailed text analysis including word count, reading time, sentence
+                        count, and more.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Other Tools</h4>
+                    <ul>
+                        <li><a href="password-generator.html">Password Generator</a></li>
+                        <li><a href="text-case.html">Text Case Converter</a></li>
+                        <li><a href="qr-generator.html">QR Code Generator</a></li>
+                        <li><a href="unit-converter.html">Unit Converter</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        function analyzeText() {
+            const text = document.getElementById('textInput').value;
+
+            if (!text.trim()) {
+                ToolNova.showMessage('Please enter some text to analyze', 'error');
+                return;
+            }
+
+            const stats = ToolNova.analyzeText(text);
+
+            // Update main stats
+            document.getElementById('wordCount').textContent = stats.words;
+            document.getElementById('charCount').textContent = stats.characters;
+            document.getElementById('charCountNoSpace').textContent = stats.charactersNoSpaces;
+            document.getElementById('sentenceCount').textContent = stats.sentences;
+            document.getElementById('paragraphCount').textContent = stats.paragraphs;
+            document.getElementById('readingTime').textContent = stats.readingTime + ' min';
+            document.getElementById('avgWordLength').textContent = stats.averageWordLength;
+
+            // Find longest word
+            const words = text.split(/\s+/).filter(w => w.length > 0);
+            const longestWord = words.reduce((a, b) => a.length > b.length ? a : b, '');
+            document.getElementById('longestWord').textContent = longestWord.length > 0 ? longestWord + ' (' + longestWord.length + ')' : '-';
+
+            document.getElementById('statsOutput').classList.add('active');
+
+            // Detailed stats
+            const detailedHtml = `
+                <strong>Reading Speed:</strong> ~${stats.readingTime} min at 200 WPM<br>
+                <strong>Unique Words:</strong> ${getUniqueWordCount(text)}<br>
+                <strong>Average Sentence Length:</strong> ${stats.sentences > 0 ? (stats.words / stats.sentences).toFixed(2) : '0'} words<br>
+                <strong>Text Density:</strong> ${((stats.charactersNoSpaces / stats.characters * 100).toFixed(2))}%
+            `;
+            document.getElementById('detailedStats').innerHTML = detailedHtml;
+            document.getElementById('detailedOutput').classList.add('active');
+
+            // Top words
+            displayTopWords(text);
+        }
+
+        function getUniqueWordCount(text) {
+            const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+            return new Set(words).size;
+        }
+
+        function displayTopWords(text) {
+            const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+            const wordFreq = {};
+
+            words.forEach(word => {
+                wordFreq[word] = (wordFreq[word] || 0) + 1;
+            });
+
+            const topWords = Object.entries(wordFreq)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            const topWordsList = document.getElementById('topWordsList');
+            topWordsList.innerHTML = '';
+
+            topWords.forEach(([word, count]) => {
+                const wordItem = document.createElement('div');
+                wordItem.style.cssText = 'background: var(--light-bg); padding: 1rem; border-radius: 6px; text-align: center;';
+                wordItem.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">${word}</div>
+                    <div style="color: var(--primary-color); font-weight: 700;">${count}x</div>
+                `;
+                topWordsList.appendChild(wordItem);
+            });
+
+            document.getElementById('topWordsOutput').classList.add('active');
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('statsOutput').classList.remove('active');
+            document.getElementById('detailedOutput').classList.remove('active');
+            document.getElementById('topWordsOutput').classList.remove('active');
+        }
+
+        function downloadTextStats() {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                ToolNova.showMessage('Please analyze some text first', 'error');
+                return;
+            }
+
+            const stats = ToolNova.analyzeText(text);
+            const content = `Text Statistics Report
+Generated: ${new Date().toLocaleString()}
+
+BASIC STATISTICS:
+Words: ${stats.words}
+Characters (with spaces): ${stats.characters}
+Characters (without spaces): ${stats.charactersNoSpaces}
+Sentences: ${stats.sentences}
+Paragraphs: ${stats.paragraphs}
+
+ANALYSIS:
+Average Word Length: ${stats.averageWordLength} characters
+Reading Time: ${stats.readingTime} minutes (at 200 WPM)
+Unique Words: ${getUniqueWordCount(text)}
+`;
+            ToolNova.downloadFile(content, 'text-statistics.txt', 'text/plain');
+            ToolNova.showMessage('Statistics downloaded successfully', 'success');
+        }
+
+        // Real-time analysis as user types
+        let analysisTimeout;
+        document.getElementById('textInput').addEventListener('input', function() {
+            clearTimeout(analysisTimeout);
+            analysisTimeout = setTimeout(() => {
+                if (this.value.trim()) {
+                    analyzeText();
+                }
+            }, 500);
+        });
+
+        // Initialize
+        ToolNova.initToolPage('Word Counter');
+    </script>
+</body>
+
+</html>

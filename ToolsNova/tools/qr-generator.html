@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - ToolNova</title>
+    <meta name="description" content="Generate QR codes from text or URLs. Download as PNG image instantly.">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="section container">
+        <a href="../index.html" class="back-link">← Back to Tools</a>
+
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>📱 QR Code Generator</h1>
+                <p>Generate QR codes from text or URLs and download as image</p>
+            </div>
+
+            <div class="tool-form">
+                <div class="form-group">
+                    <label for="qrContent">Enter Text or URL</label>
+                    <input type="text" id="qrContent" placeholder="https://example.com or any text...">
+                </div>
+
+                <div class="form-group">
+                    <label for="qrSize">QR Code Size</label>
+                    <select id="qrSize">
+                        <option value="100">Small (100x100)</option>
+                        <option value="200" selected>Medium (200x200)</option>
+                        <option value="300">Large (300x300)</option>
+                        <option value="400">Extra Large (400x400)</option>
+                        <option value="500">XXL (500x500)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>QR Code Styling</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label for="darkColor">Dark Color:</label>
+                            <input type="color" id="darkColor" value="#000000" style="padding: 4px; max-width: 80px; cursor: pointer;">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <label for="lightColor">Light Color:</label>
+                            <input type="color" id="lightColor" value="#ffffff" style="padding: 4px; max-width: 80px; cursor: pointer;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="button" onclick="generateQRCode()">Generate QR Code</button>
+                    <button class="button button-secondary" onclick="clearQRCode()">Clear</button>
+                </div>
+            </div>
+
+            <!-- QR Code Output -->
+            <div id="qrOutput" class="output-section">
+                <h3>Generated QR Code</h3>
+                <div class="qr-output">
+                    <div id="qrcodeContainer" style="background: white; padding: 1rem; border-radius: 8px; display: inline-block;"></div>
+                    <div class="button-group" style="margin-top: 1.5rem;">
+                        <button class="button button-success" onclick="downloadQRCode()">📥 Download PNG</button>
+                        <button class="button button-secondary" onclick="copyQRToClipboard()">📋 Copy Image</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats" style="margin-top: 2rem;">
+                <div class="stat-item">
+                    <div class="stat-number" id="charCount">0</div>
+                    <div class="stat-label">Characters in QR</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="qrVersion">-</div>
+                    <div class="stat-label">QR Version</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="dataCapacity">-</div>
+                    <div class="stat-label">Data Type</div>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="info-message" style="margin-top: 2rem;">
+                <strong>💡 Tips:</strong><br>
+                • QR codes can store up to 4,296 characters<br>
+                • Works with URLs, text, email addresses, phone numbers, WiFi, etc.<br>
+                • Customize colors to match your branding<br>
+                • Downloaded QR codes are high-quality PNG files
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About This Tool</h4>
+                    <p style="color: #cbd5e1;">Generate and download QR codes instantly. Perfect for marketing,
+                        business cards, and sharing information.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Other Tools</h4>
+                    <ul>
+                        <li><a href="password-generator.html">Password Generator</a></li>
+                        <li><a href="word-counter.html">Word Counter</a></li>
+                        <li><a href="text-case.html">Text Case Converter</a></li>
+                        <li><a href="unit-converter.html">Unit Converter</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        let currentQRCode = null;
+
+        function generateQRCode() {
+            const content = document.getElementById('qrContent').value.trim();
+
+            if (!content) {
+                ToolNova.showMessage('Please enter text or URL', 'error');
+                return;
+            }
+
+            if (content.length > 4296) {
+                ToolNova.showMessage('Content too long! Maximum 4,296 characters allowed.', 'error');
+                return;
+            }
+
+            // Clear previous QR code
+            document.getElementById('qrcodeContainer').innerHTML = '';
+
+            // Get settings
+            const size = parseInt(document.getElementById('qrSize').value);
+            const darkColor = document.getElementById('darkColor').value;
+            const lightColor = document.getElementById('lightColor').value;
+
+            // Generate QR code
+            currentQRCode = new QRCode(document.getElementById('qrcodeContainer'), {
+                text: content,
+                width: size,
+                height: size,
+                colorDark: darkColor,
+                colorLight: lightColor,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Update stats
+            document.getElementById('charCount').textContent = content.length;
+            document.getElementById('dataCapacity').textContent = detectDataType(content);
+
+            // Determine QR version (rough estimate)
+            let version = 1;
+            if (content.length > 17) version = 2;
+            if (content.length > 34) version = 3;
+            if (content.length > 58) version = 4;
+            if (content.length > 86) version = 5;
+            if (content.length > 118) version = 6;
+            document.getElementById('qrVersion').textContent = 'Version ' + version;
+
+            document.getElementById('qrOutput').classList.add('active');
+            ToolNova.showMessage('QR code generated successfully!', 'success');
+        }
+
+        function detectDataType(content) {
+            if (/^https?:\/\//.test(content)) return 'URL';
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content)) return 'Email';
+            if (/^\+?[\d\s\-()]{7,}$/.test(content)) return 'Phone';
+            if (/^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,}/.test(content)) return 'URL/Domain';
+            return 'Text';
+        }
+
+        function downloadQRCode() {
+            const canvas = document.querySelector('#qrcodeContainer canvas');
+            if (!canvas) {
+                ToolNova.showMessage('Please generate a QR code first', 'error');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'qrcode-' + Date.now() + '.png';
+            link.click();
+            ToolNova.showMessage('QR code downloaded!', 'success');
+        }
+
+        function copyQRToClipboard() {
+            const canvas = document.querySelector('#qrcodeContainer canvas');
+            if (!canvas) {
+                ToolNova.showMessage('Please generate a QR code first', 'error');
+                return;
+            }
+
+            canvas.toBlob(blob => {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(() => {
+                    ToolNova.showMessage('QR code copied to clipboard!', 'success');
+                }).catch(err => {
+                    ToolNova.showMessage('Failed to copy to clipboard', 'error');
+                });
+            });
+        }
+
+        function clearQRCode() {
+            document.getElementById('qrContent').value = '';
+            document.getElementById('qrcodeContainer').innerHTML = '';
+            document.getElementById('qrOutput').classList.remove('active');
+            document.getElementById('charCount').textContent = '0';
+            document.getElementById('qrVersion').textContent = '-';
+            document.getElementById('dataCapacity').textContent = '-';
+            currentQRCode = null;
+        }
+
+        // Generate QR code on enter
+        document.getElementById('qrContent').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateQRCode();
+        });
+
+        // Update QR code when size or colors change
+        document.getElementById('qrSize').addEventListener('change', () => {
+            if (document.getElementById('qrContent').value.trim()) {
+                generateQRCode();
+            }
+        });
+
+        document.getElementById('darkColor').addEventListener('change', () => {
+            if (document.getElementById('qrContent').value.trim()) {
+                generateQRCode();
+            }
+        });
+
+        document.getElementById('lightColor').addEventListener('change', () => {
+            if (document.getElementById('qrContent').value.trim()) {
+                generateQRCode();
+            }
+        });
+
+        // Initialize
+        ToolNova.initToolPage('QR Code Generator');
+    </script>
+</body>
+
+</html>

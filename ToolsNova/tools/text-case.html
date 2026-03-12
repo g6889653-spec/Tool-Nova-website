@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Case Converter - ToolNova</title>
+    <meta name="description" content="Convert text between different cases: lowercase, uppercase, title case, camelCase, snake_case, and more.">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="section container">
+        <a href="../index.html" class="back-link">← Back to Tools</a>
+
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>🔤 Text Case Converter</h1>
+                <p>Convert text between multiple case formats instantly</p>
+            </div>
+
+            <div class="tool-form">
+                <div class="form-group">
+                    <label for="textInput">Enter Your Text</label>
+                    <textarea id="textInput" placeholder="Enter text to convert..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="button" onclick="convertAllCases()">Convert All</button>
+                    <button class="button button-secondary" onclick="clearText()">Clear</button>
+                </div>
+            </div>
+
+            <!-- Case Conversions Grid -->
+            <div id="conversionsOutput" class="output-section">
+                <h3>Available Conversions</h3>
+                <div style="display: grid; gap: 1.5rem;">
+                    <!-- Lowercase -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">lowercase</h4>
+                            <button class="copy-button" onclick="copyCase('lowercase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="lowercase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- UPPERCASE -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">UPPERCASE</h4>
+                            <button class="copy-button" onclick="copyCase('uppercase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="uppercase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- Title Case -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">Title Case</h4>
+                            <button class="copy-button" onclick="copyCase('capitalize')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="capitalize"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- AlTeRnAtInG cAsE -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">AlTeRnAtInG cAsE</h4>
+                            <button class="copy-button" onclick="copyCase('alternating')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="alternating"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- reverse -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">reverse</h4>
+                            <button class="copy-button" onclick="copyCase('reverse')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="reverse"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- camelCase -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">camelCase</h4>
+                            <button class="copy-button" onclick="copyCase('camelCase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="camelCase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- PascalCase -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">PascalCase</h4>
+                            <button class="copy-button" onclick="copyCase('pascalCase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="pascalCase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- snake_case -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">snake_case</h4>
+                            <button class="copy-button" onclick="copyCase('snakeCase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="snakeCase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- kebab-case -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">kebab-case</h4>
+                            <button class="copy-button" onclick="copyCase('kebabCase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="kebabCase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+
+                    <!-- Title_Case -->
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h4 style="margin: 0; color: #666;">Title Case (spaces)</h4>
+                            <button class="copy-button" onclick="copyCase('titleCase')">📋 Copy</button>
+                        </div>
+                        <div class="output-content" id="titleCase"
+                            style="background: white; margin-top: 0.5rem; padding: 0.75rem;">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Reference -->
+            <div class="info-message" style="margin-top: 2rem;">
+                <strong>📌 Quick Reference:</strong><br>
+                • <strong>lowercase:</strong> all letters reduced (good for URLs)<br>
+                • <strong>UPPERCASE:</strong> all letters capitalized<br>
+                • <strong>Title Case:</strong> first letter of each word capitalized<br>
+                • <strong>camelCase:</strong> no spaces, first letter lowercase, then capitalize (for variables)<br>
+                • <strong>PascalCase:</strong> like camelCase but first letter uppercase (for classes)<br>
+                • <strong>snake_case:</strong> words separated by underscores (for databases)<br>
+                • <strong>kebab-case:</strong> words separated by hyphens (for CSS & URLs)
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About This Tool</h4>
+                    <p style="color: #cbd5e1;">Convert text to multiple case formats. Perfect for programmers,
+                        writers, and content creators.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Other Tools</h4>
+                    <ul>
+                        <li><a href="password-generator.html">Password Generator</a></li>
+                        <li><a href="word-counter.html">Word Counter</a></li>
+                        <li><a href="qr-generator.html">QR Code Generator</a></li>
+                        <li><a href="unit-converter.html">Unit Converter</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        function convertAllCases() {
+            const text = document.getElementById('textInput').value;
+
+            if (!text.trim()) {
+                ToolNova.showMessage('Please enter some text to convert', 'error');
+                return;
+            }
+
+            const cases = ToolNova.textCases(text);
+
+            // Update all case outputs
+            for (const [caseType, result] of Object.entries(cases)) {
+                const elem = document.getElementById(caseType);
+                if (elem) {
+                    elem.textContent = result;
+                }
+            }
+
+            document.getElementById('conversionsOutput').classList.add('active');
+        }
+
+        function copyCase(caseType) {
+            const elem = document.getElementById(caseType);
+            if (elem && elem.textContent !== '-') {
+                const btn = event.target;
+                ToolNova.copyToClipboard(elem.textContent, btn);
+            }
+        }
+
+        function clearText() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('conversionsOutput').classList.remove('active');
+            // Reset all outputs
+            const caseTypes = ['lowercase', 'uppercase', 'capitalize', 'alternating', 'reverse', 'camelCase', 'pascalCase', 'snakeCase', 'kebabCase', 'titleCase'];
+            caseTypes.forEach(type => {
+                const elem = document.getElementById(type);
+                if (elem) elem.textContent = '-';
+            });
+        }
+
+        // Real-time conversion as user types
+        let conversionTimeout;
+        document.getElementById('textInput').addEventListener('input', function() {
+            clearTimeout(conversionTimeout);
+            conversionTimeout = setTimeout(() => {
+                if (this.value.trim()) {
+                    convertAllCases();
+                }
+            }, 300);
+        });
+
+        // Initialize
+        ToolNova.initToolPage('Text Case Converter');
+    </script>
+</body>
+
+</html>

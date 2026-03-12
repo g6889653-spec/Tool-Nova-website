@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Converter - ToolNova</title>
+    <meta name="description" content="Convert colors between HEX, RGB, and HSL formats. Generate color palettes instantly.">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="section container">
+        <a href="../index.html" class="back-link">← Back to Tools</a>
+
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>🎨 Color Converter & Palette Generator</h1>
+                <p>Convert colors between formats and generate harmonious color palettes</p>
+            </div>
+
+            <div class="tool-form">
+                <div class="form-group">
+                    <label for="colorPickerInput">Choose Color or Enter HEX</label>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <input type="color" id="colorPickerInput" value="#6366f1" style="width: 100px; height: 50px; cursor: pointer; border-radius: 6px;">
+                        <input type="text" id="hexInput" value="#6366f1" placeholder="#000000" style="flex: 1;">
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="button" onclick="convertColor()">Convert Color</button>
+                    <button class="button button-secondary" onclick="generateRandomColor()">🎲 Random Color</button>
+                    <button class="button button-success" onclick="generatePalette()">🎨 Generate Palette</button>
+                </div>
+            </div>
+
+            <!-- Color Preview -->
+            <div id="colorPreview" class="output-section">
+                <h3>Color Preview</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div id="colorBox" style="width: 100%; height: 120px; border-radius: 8px; border: 2px solid var(--border-color); margin-bottom: 1rem; background: #6366f1;"></div>
+                        <button class="copy-button" style="width: 100%;" onclick="copyColorCode('hex')">📋 Copy HEX</button>
+                    </div>
+
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 1rem;">Color Information</div>
+                        <div style="color: var(--text-light); font-size: 0.9rem; line-height: 1.8;">
+                            <div><strong>HEX:</strong> <span id="hexValue">#6366f1</span></div>
+                            <div><strong>RGB:</strong> <span id="rgbValue">99, 102, 241</span></div>
+                            <div><strong>HSL:</strong> <span id="hslValue">238.8°, 92.6%, 66.7%</span></div>
+                            <div style="margin-top: 0.5rem;">
+                                <button class="copy-button" onclick="copyColorCode('rgb')" style="width: 100%; margin-bottom: 0.5rem;">Copy RGB</button>
+                                <button class="copy-button" onclick="copyColorCode('hsl')" style="width: 100%;">Copy HSL</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Palette -->
+            <div id="paletteSection" class="output-section">
+                <h3>Generated Palette</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;" id="paletteGrid"></div>
+            </div>
+
+            <!-- Variations -->
+            <div id="variationsSection" class="output-section">
+                <h3>Color Variations</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 1rem;">Lighten</label>
+                        <button class="copy-button" style="width: 100%; margin-bottom: 0.5rem;" onclick="copyColorCode('lighten')">+20%</button>
+                        <button class="copy-button" style="width: 100%;" onclick="copyColorCode('lighten2')">+40%</button>
+                    </div>
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 1rem;">Darken</label>
+                        <button class="copy-button" style="width: 100%; margin-bottom: 0.5rem;" onclick="copyColorCode('darken')">-20%</button>
+                        <button class="copy-button" style="width: 100%;" onclick="copyColorCode('darken2')">-40%</button>
+                    </div>
+                    <div style="background: var(--light-bg); padding: 1.5rem; border-radius: 8px;">
+                        <label style="font-weight: 600; display: block; margin-bottom: 1rem;">Saturate</label>
+                        <button class="copy-button" style="width: 100%; margin-bottom: 0.5rem;" onclick="copyColorCode('saturate')">+20%</button>
+                        <button class="copy-button" style="width: 100%;" onclick="copyColorCode('desaturate')">-20%</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About This Tool</h4>
+                    <p style="color: #cbd5e1;">Convert between HEX, RGB, and HSL color formats. Generate color palettes for design projects.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Other Tools</h4>
+                    <ul>
+                        <li><a href="password-generator.html">Password Generator</a></li>
+                        <li><a href="word-counter.html">Word Counter</a></li>
+                        <li><a href="text-case.html">Text Case Converter</a></li>
+                        <li><a href="qr-generator.html">QR Code Generator</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        // Color conversion functions
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                l: Math.round(l * 100)
+            };
+        }
+
+        function hslToRgb(h, s, l) {
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+            return {
+                r: Math.round(r * 255),
+                g: Math.round(g * 255),
+                b: Math.round(b * 255)
+            };
+        }
+
+        function convertColor() {
+            let hex = document.getElementById('hexInput').value;
+            if (!hex.startsWith('#')) hex = '#' + hex;
+
+            if (!/^#[0-9A-F]{6}$/i.test(hex)) {
+                ToolNova.showMessage('Invalid HEX color format', 'error');
+                return;
+            }
+
+            document.getElementById('colorPickerInput').value = hex;
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+            // Update display
+            document.getElementById('colorBox').style.backgroundColor = hex;
+            document.getElementById('hexValue').textContent = hex;
+            document.getElementById('rgbValue').textContent = `${rgb.r}, ${rgb.g}, ${rgb.b}`;
+            document.getElementById('hslValue').textContent = `${hsl.h}°, ${hsl.s}%, ${hsl.l}%`;
+
+            document.getElementById('colorPreview').classList.add('active');
+            document.getElementById('variationsSection').classList.add('active');
+        }
+
+        function generateRandomColor() {
+            const hex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
+            document.getElementById('hexInput').value = hex;
+            convertColor();
+        }
+
+        function generatePalette() {
+            const hex = document.getElementById('hexInput').value;
+            if (!hex) {
+                ToolNova.showMessage('Please select a color first', 'error');
+                return;
+            }
+
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+            const paletteColors = [];
+            // Monochromatic palette
+            for (let i = 0; i < 5; i++) {
+                const newL = 20 + (i * 15);
+                const newRgb = hslToRgb(hsl.h, hsl.s, newL);
+                paletteColors.push(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
+            }
+
+            const paletteGrid = document.getElementById('paletteGrid');
+            paletteGrid.innerHTML = paletteColors.map(color => `
+                <div style="background: var(--light-bg); border-radius: 8px; overflow: hidden;">
+                    <div style="background: ${color}; height: 80px; cursor: pointer;" onclick="ToolNova.copyToClipboard('${color}')"></div>
+                    <div style="padding: 0.75rem; text-align: center; font-size: 0.85rem; font-weight: 600;">${color}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('paletteSection').classList.add('active');
+            ToolNova.showMessage('Palette generated! Click colors to copy HEX', 'success');
+        }
+
+        function copyColorCode(type) {
+            const hex = document.getElementById('hexInput').value;
+            const rgb = hexToRgb(hex);
+            const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+            const colorStr = {
+                hex: hex,
+                rgb: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`,
+                hsl: `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`,
+                lighten: rgbToHex(...Object.values(hslToRgb(hsl.h, hsl.s, Math.min(100, hsl.l + 20)))),
+                lighten2: rgbToHex(...Object.values(hslToRgb(hsl.h, hsl.s, Math.min(100, hsl.l + 40)))),
+                darken: rgbToHex(...Object.values(hslToRgb(hsl.h, hsl.s, Math.max(0, hsl.l - 20)))),
+                darken2: rgbToHex(...Object.values(hslToRgb(hsl.h, hsl.s, Math.max(0, hsl.l - 40)))),
+                saturate: rgbToHex(...Object.values(hslToRgb(hsl.h, Math.min(100, hsl.s + 20), hsl.l))),
+                desaturate: rgbToHex(...Object.values(hslToRgb(hsl.h, Math.max(0, hsl.s - 20), hsl.l)))
+            };
+
+            if (colorStr[type]) {
+                const btn = event.target;
+                ToolNova.copyToClipboard(colorStr[type], btn);
+            }
+        }
+
+        // Color picker and HEX input sync
+        document.getElementById('colorPickerInput').addEventListener('input', (e) => {
+            document.getElementById('hexInput').value = e.target.value;
+            convertColor();
+        });
+
+        document.getElementById('hexInput').addEventListener('change', convertColor);
+
+        // Initialize
+        ToolNova.initToolPage('Color Converter');
+        convertColor();
+    </script>
+</body>
+
+</html>

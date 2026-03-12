@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base64 Encoder - ToolNova</title>
+    <meta name="description" content="Encode text and files to Base64. Decode Base64 strings back to readable text and data formats.">
+    <meta name="keywords" content="Base64 encoder, Base64 decoder, encoding, decoding">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .encoder-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .encoder-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .encoder-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .output-box {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-height: 100px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .action-buttons button:hover {
+            background: #5558e3;
+            transform: translateY(-2px);
+        }
+
+        .button-secondary {
+            background: var(--secondary-color) !important;
+        }
+
+        .button-secondary:hover {
+            background: #db2777 !important;
+        }
+
+        .stats-box {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #5558e3;
+        }
+
+        @media (max-width: 768px) {
+            .encoder-container {
+                grid-template-columns: 1fr;
+            }
+
+            textarea {
+                height: 250px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="section container">
+            <h1>Base64 Encoder/Decoder</h1>
+            <p class="section-subtitle">Encode text to Base64 and decode Base64 strings instantly</p>
+
+            <!-- Input/Output Section -->
+            <div class="encoder-container">
+                <div class="encoder-section">
+                    <h3>Input</h3>
+                    <textarea id="textInput" placeholder="Enter text to encode or Base64 to decode..."
+                        spellcheck="false"></textarea>
+                </div>
+
+                <div class="encoder-section">
+                    <h3>Output</h3>
+                    <div id="textOutput" class="output-box">
+                        Your encoded/decoded text will appear here
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <!-- File Upload -->
+            <div style="margin: 2rem 0;">
+                <h3 style="margin-bottom: 1rem;">Upload File to Encode</h3>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" onchange="encodeFile()">
+                    <label for="fileInput" class="file-input-label">Choose File to Encode</label>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button onclick="encodeText()">Encode to Base64</button>
+                <button onclick="decodeText()" class="button-secondary">Decode from Base64</button>
+                <button onclick="copyOutput()" style="background: #10b981;">Copy Output</button>
+                <button onclick="downloadOutput()">Download</button>
+                <button onclick="clearAll()">Clear</button>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-box">
+                <h3 style="margin-top: 0;">Statistics</h3>
+                <div class="stat-item">
+                    <span>Input Size:</span>
+                    <strong id="inputSize">0 bytes</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Output Size:</span>
+                    <strong id="outputSize">0 bytes</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Compression Ratio:</span>
+                    <strong id="ratio">—</strong>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ToolNova</h4>
+                    <p style="color: #cbd5e1;">Free online tools for productivity and everyday tasks.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../index.html#tools">Tools</a></li>
+                        <li><a href="../index.html#about">About</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        const textInput = document.getElementById('textInput');
+        const textOutput = document.getElementById('textOutput');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+
+        textInput.addEventListener('input', updateStats);
+
+        function updateStats() {
+            const inputText = textInput.value;
+            const outputText = textOutput.textContent;
+            const inputBytes = new Blob([inputText]).size;
+            const outputBytes = new Blob([outputText]).size;
+
+            document.getElementById('inputSize').textContent = inputBytes + ' bytes';
+
+            if (outputText !== 'Your encoded/decoded text will appear here') {
+                document.getElementById('outputSize').textContent = outputBytes + ' bytes';
+                const ratio = ((outputBytes - inputBytes) / inputBytes * 100).toFixed(1);
+                document.getElementById('ratio').textContent = ratio > 0 ? '+' + ratio + '%' : ratio + '%';
+            } else {
+                document.getElementById('outputSize').textContent = '0 bytes';
+                document.getElementById('ratio').textContent = '—';
+            }
+        }
+
+        function encodeText() {
+            try {
+                const text = textInput.value;
+                if (!text) {
+                    showError('Please enter text to encode');
+                    return;
+                }
+                const encoded = btoa(unescape(encodeURIComponent(text)));
+                textOutput.textContent = encoded;
+                updateStats();
+                showSuccess('Text encoded to Base64 successfully!');
+            } catch (error) {
+                showError('Error encoding: ' + error.message);
+            }
+        }
+
+        function decodeText() {
+            try {
+                const text = textInput.value;
+                if (!text) {
+                    showError('Please enter Base64 text to decode');
+                    return;
+                }
+                const decoded = decodeURIComponent(escape(atob(text)));
+                textOutput.textContent = decoded;
+                updateStats();
+                showSuccess('Base64 decoded successfully!');
+            } catch (error) {
+                showError('Invalid Base64: ' + error.message);
+            }
+        }
+
+        function encodeFile() {
+            const file = document.getElementById('fileInput').files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const base64 = e.target.result.split(',')[1] || e.target.result;
+                    textOutput.textContent = base64;
+                    textInput.value = file.name + ' (encoded)';
+                    updateStats();
+                    showSuccess('File encoded to Base64 successfully!');
+                } catch (error) {
+                    showError('Error encoding file: ' + error.message);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function copyOutput() {
+            const text = textOutput.textContent;
+            if (text === 'Your encoded/decoded text will appear here') {
+                showError('Nothing to copy! Encode or decode first.');
+                return;
+            }
+            ToolNova.copyToClipboard(text);
+            showSuccess('Copied to clipboard!');
+        }
+
+        function downloadOutput() {
+            const text = textOutput.textContent;
+            if (text === 'Your encoded/decoded text will appear here') {
+                showError('Nothing to download!');
+                return;
+            }
+            ToolNova.downloadFile(text, 'encoded.txt', 'text/plain');
+        }
+
+        function clearAll() {
+            textInput.value = '';
+            textOutput.textContent = 'Your encoded/decoded text will appear here';
+            document.getElementById('fileInput').value = '';
+            updateStats();
+            hideMessages();
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

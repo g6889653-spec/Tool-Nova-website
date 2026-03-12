@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter - ToolNova</title>
+    <meta name="description" content="Format, validate, and minify JSON data. Pretty-print JSON with syntax highlighting and error detection.">
+    <meta name="keywords" content="JSON formatter, JSON validator, JSON minifier, JSON parser">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .json-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .json-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .json-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 400px;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .json-output {
+            background: #1e293b;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .action-buttons button:hover {
+            background: #5558e3;
+            transform: translateY(-2px);
+        }
+
+        .button-secondary {
+            background: var(--secondary-color) !important;
+        }
+
+        .button-secondary:hover {
+            background: #db2777 !important;
+        }
+
+        .stats-box {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .json-container {
+                grid-template-columns: 1fr;
+            }
+
+            textarea {
+                height: 300px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="section container">
+            <h1>JSON Formatter</h1>
+            <p class="section-subtitle">Format, validate, and minify your JSON data</p>
+
+            <!-- Input Section -->
+            <div class="json-container">
+                <div class="json-section">
+                    <h3>Input JSON</h3>
+                    <textarea id="jsonInput" placeholder="Paste your JSON here..." spellcheck="false"></textarea>
+                </div>
+
+                <div class="json-section">
+                    <h3>Output</h3>
+                    <div id="jsonOutput" class="json-output" style="padding: 1rem; border-radius: 8px; height: 400px; overflow-y: auto;">
+                        Your formatted JSON will appear here
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error/Success Messages -->
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button onclick="formatJSON()">Format</button>
+                <button onclick="minifyJSON()" class="button-secondary">Minify</button>
+                <button onclick="validateJSON()">Validate</button>
+                <button onclick="copyOutput()" style="background: #10b981;">Copy Output</button>
+                <button onclick="downloadJSON()">Download</button>
+                <button onclick="clearJSON()">Clear</button>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-box">
+                <h3 style="margin-top: 0;">Statistics</h3>
+                <div class="stat-item">
+                    <span>Characters:</span>
+                    <strong id="charCount">0</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Lines:</span>
+                    <strong id="lineCount">0</strong>
+                </div>
+                <div class="stat-item">
+                    <span>JSON Valid:</span>
+                    <strong id="validStatus">—</strong>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ToolNova</h4>
+                    <p style="color: #cbd5e1;">Free online tools for productivity and everyday tasks.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../index.html#tools">Tools</a></li>
+                        <li><a href="../index.html#about">About</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        const jsonInput = document.getElementById('jsonInput');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const errorMsg = document.getElementById('errorMessage');
+        const successMsg = document.getElementById('successMessage');
+
+        // Update on input
+        jsonInput.addEventListener('input', updateStats);
+
+        function updateStats() {
+            const text = jsonInput.value;
+            document.getElementById('charCount').textContent = text.length;
+            document.getElementById('lineCount').textContent = text.split('\n').length;
+        }
+
+        function formatJSON() {
+            try {
+                const json = JSON.parse(jsonInput.value);
+                const formatted = JSON.stringify(json, null, 2);
+                jsonOutput.textContent = formatted;
+                updateStats();
+                showSuccess('JSON formatted successfully!');
+                updateJSONStatus(true);
+            } catch (error) {
+                showError('Invalid JSON: ' + error.message);
+                updateJSONStatus(false);
+            }
+        }
+
+        function minifyJSON() {
+            try {
+                const json = JSON.parse(jsonInput.value);
+                const minified = JSON.stringify(json);
+                jsonOutput.textContent = minified;
+                showSuccess('JSON minified successfully!');
+                updateJSONStatus(true);
+            } catch (error) {
+                showError('Invalid JSON: ' + error.message);
+                updateJSONStatus(false);
+            }
+        }
+
+        function validateJSON() {
+            try {
+                JSON.parse(jsonInput.value);
+                showSuccess('✓ JSON is valid!');
+                updateJSONStatus(true);
+            } catch (error) {
+                showError('✗ Invalid JSON: ' + error.message);
+                updateJSONStatus(false);
+            }
+        }
+
+        function updateJSONStatus(isValid) {
+            const statusEl = document.getElementById('validStatus');
+            statusEl.textContent = isValid ? '✓ Valid' : '✗ Invalid';
+            statusEl.style.color = isValid ? '#10b981' : '#ef4444';
+        }
+
+        function copyOutput() {
+            const text = jsonOutput.textContent;
+            if (text === 'Your formatted JSON will appear here') {
+                showError('Nothing to copy! Format or minify JSON first.');
+                return;
+            }
+            ToolNova.copyToClipboard(text);
+            showSuccess('Copied to clipboard!');
+        }
+
+        function downloadJSON() {
+            const text = jsonOutput.textContent;
+            if (text === 'Your formatted JSON will appear here') {
+                showError('Nothing to download! Format JSON first.');
+                return;
+            }
+            ToolNova.downloadFile(text, 'data.json', 'application/json');
+        }
+
+        function clearJSON() {
+            jsonInput.value = '';
+            jsonOutput.textContent = 'Your formatted JSON will appear here';
+            document.getElementById('validStatus').textContent = '—';
+            updateStats();
+            hideMessages();
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            successMsg.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMsg.textContent = message;
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>

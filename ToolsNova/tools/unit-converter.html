@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter - ToolNova</title>
+    <meta name="description" content="Convert between metric and imperial units: length, weight, volume, and temperature.">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="section container">
+        <a href="../index.html" class="back-link">← Back to Tools</a>
+
+        <div class="tool-container">
+            <div class="tool-header">
+                <h1>🔄 Unit Converter</h1>
+                <p>Convert between metric and imperial units instantly</p>
+            </div>
+
+            <div class="tool-form">
+                <div class="form-group">
+                    <label for="conversionType">Select Conversion Type</label>
+                    <select id="conversionType" onchange="updateUnits()">
+                        <option value="length">Length</option>
+                        <option value="weight">Weight</option>
+                        <option value="volume">Volume</option>
+                        <option value="temperature">Temperature</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 1.5rem;">
+                    <!-- From Unit -->
+                    <div>
+                        <label>From:</label>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <input type="number" id="fromValue" placeholder="Enter value" style="flex: 1;">
+                            <select id="fromUnit" onchange="convertUnits()" style="flex: 1;">
+                                <option value="meter">meter (m)</option>
+                                <option value="kilometer">kilometer (km)</option>
+                                <option value="centimeter">centimeter (cm)</option>
+                                <option value="millimeter">millimeter (mm)</option>
+                                <option value="inch">inch (in)</option>
+                                <option value="foot">foot (ft)</option>
+                                <option value="yard">yard (yd)</option>
+                                <option value="mile">mile (mi)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- To Unit -->
+                    <div>
+                        <label>To:</label>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                            <input type="number" id="toValue" placeholder="Result" readonly style="flex: 1; background: #f8fafc;">
+                            <select id="toUnit" onchange="convertUnits()" style="flex: 1;">
+                                <option value="meter">meter (m)</option>
+                                <option value="kilometer">kilometer (km)</option>
+                                <option value="centimeter">centimeter (cm)</option>
+                                <option value="millimeter">millimeter (mm)</option>
+                                <option value="inch">inch (in)</option>
+                                <option value="foot">foot (ft)</option>
+                                <option value="yard">yard (yd)</option>
+                                <option value="mile">mile (mi)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="button" onclick="swapUnits()">🔀 Swap Units</button>
+                    <button class="button button-secondary" onclick="clearConverter()">Clear</button>
+                </div>
+            </div>
+
+            <!-- Conversion Information -->
+            <div id="conversionInfo" class="output-section">
+                <h3>Conversion Information</h3>
+                <div id="conversionDetails" class="output-content" style="background: white;"></div>
+            </div>
+
+            <!-- Common Conversions Table -->
+            <div id="commonConversions" class="output-section">
+                <h3>Quick Reference</h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: var(--light-bg);">
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="padding: 0.75rem; text-align: left;">From</th>
+                                <th style="padding: 0.75rem; text-align: center;">To</th>
+                                <th style="padding: 0.75rem; text-align: right;">Factor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="commonTable">
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 0.75rem;">1 meter</td>
+                                <td style="padding: 0.75rem; text-align: center;">3.28084 feet</td>
+                                <td style="padding: 0.75rem; text-align: right;">÷ 0.3048</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Helpful Tips -->
+            <div class="info-message" style="margin-top: 2rem;">
+                <strong>💡 Tips:</strong><br>
+                • Supported types: Length, Weight, Volume, and Temperature<br>
+                • For temperature, enter the value and select the conversion type<br>
+                • Results are rounded to 4 decimal places<br>
+                • Use the Swap button to quickly reverse conversions
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About This Tool</h4>
+                    <p style="color: #cbd5e1;">Convert between metric and imperial units. Perfect for cooking,
+                        construction, science, and everyday tasks.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Other Tools</h4>
+                    <ul>
+                        <li><a href="password-generator.html">Password Generator</a></li>
+                        <li><a href="word-counter.html">Word Counter</a></li>
+                        <li><a href="text-case.html">Text Case Converter</a></li>
+                        <li><a href="qr-generator.html">QR Code Generator</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+    <script>
+        const unitOptions = {
+            length: {
+                units: ['millimeter', 'centimeter', 'meter', 'kilometer', 'inch', 'foot', 'yard', 'mile'],
+                labels: { millimeter: 'mm', centimeter: 'cm', meter: 'm', kilometer: 'km', inch: 'in', foot: 'ft', yard: 'yd', mile: 'mi' }
+            },
+            weight: {
+                units: ['milligram', 'gram', 'kilogram', 'ounce', 'pound', 'ton'],
+                labels: { milligram: 'mg', gram: 'g', kilogram: 'kg', ounce: 'oz', pound: 'lb', ton: 't' }
+            },
+            volume: {
+                units: ['milliliter', 'liter', 'gallon', 'pint', 'cup', 'tablespoon', 'teaspoon', 'cubic meter'],
+                labels: { milliliter: 'ml', liter: 'l', gallon: 'gal', pint: 'pt', cup: 'cup', tablespoon: 'tbsp', teaspoon: 'tsp', 'cubic meter': 'm³' }
+            },
+            temperature: {
+                units: ['Celsius (°C)', 'Fahrenheit (°F)', 'Kelvin (K)'],
+                labels: { 'Celsius (°C)': '°C', 'Fahrenheit (°F)': '°F', 'Kelvin (K)': 'K' }
+            }
+        };
+
+        function updateUnits() {
+            const type = document.getElementById('conversionType').value;
+            const units = unitOptions[type].units;
+            const labels = unitOptions[type].labels;
+
+            // Update from unit dropdown
+            const fromUnit = document.getElementById('fromUnit');
+            fromUnit.innerHTML = units.map(u => `<option value="${u}">${u} (${labels[u]})</option>`).join('');
+
+            // Update to unit dropdown
+            const toUnit = document.getElementById('toUnit');
+            toUnit.innerHTML = units.map(u => `<option value="${u}">${u} (${labels[u]})</option>`).join('');
+
+            // Set default second unit
+            if (units.length > 1) toUnit.value = units[1];
+
+            // Update quick reference table
+            updateCommonConversions(type);
+
+            clearConverter();
+        }
+
+        function convertUnits() {
+            const type = document.getElementById('conversionType').value;
+            const value = parseFloat(document.getElementById('fromValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+
+            if (isNaN(value)) {
+                document.getElementById('toValue').value = '';
+                document.getElementById('conversionInfo').classList.remove('active');
+                return;
+            }
+
+            let result;
+            if (type === 'temperature') {
+                result = convertTemperature(value, fromUnit, toUnit);
+            } else {
+                result = ToolNova.convert(value, fromUnit, toUnit, type);
+            }
+
+            if (result !== null) {
+                const precision = 4;
+                document.getElementById('toValue').value = parseFloat(result.toFixed(precision));
+
+                // Show conversion info
+                const labels = unitOptions[type].labels;
+                const details = `
+                    <strong>${value} ${labels[fromUnit]}</strong> = <strong>${parseFloat(result.toFixed(precision))} ${labels[toUnit]}</strong><br>
+                    <small style="color: var(--text-light);">Conversion type: ${type.charAt(0).toUpperCase() + type.slice(1)}</small>
+                `;
+                document.getElementById('conversionDetails').innerHTML = details;
+                document.getElementById('conversionInfo').classList.add('active');
+            }
+        }
+
+        function convertTemperature(value, from, to) {
+            const fromBase = from.split(' ')[0];
+            const toBase = to.split(' ')[0];
+
+            const celsiusConversions = {
+                'Celsius': v => v,
+                'Fahrenheit': v => (v - 32) * 5 / 9,
+                'Kelvin': v => v - 273.15
+            };
+
+            const toCelsius = celsiusConversions[fromBase](value);
+
+            const fromCelsius = {
+                'Celsius': v => v,
+                'Fahrenheit': v => v * 9 / 5 + 32,
+                'Kelvin': v => v + 273.15
+            };
+
+            return fromCelsius[toBase](toCelsius);
+        }
+
+        function swapUnits() {
+            const fromUnit = document.getElementById('fromUnit');
+            const toUnit = document.getElementById('toUnit');
+            const temp = fromUnit.value;
+            fromUnit.value = toUnit.value;
+            toUnit.value = temp;
+
+            const fromValue = document.getElementById('fromValue').value;
+            const toValue = document.getElementById('toValue').value;
+            if (toValue) {
+                document.getElementById('fromValue').value = toValue;
+                document.getElementById('toValue').value = '';
+            }
+
+            convertUnits();
+        }
+
+        function clearConverter() {
+            document.getElementById('fromValue').value = '';
+            document.getElementById('toValue').value = '';
+            document.getElementById('conversionInfo').classList.remove('active');
+        }
+
+        function updateCommonConversions(type) {
+            const commonConversionsData = {
+                length: [
+                    ['1 meter', '3.28084 feet'],
+                    ['1 kilometer', '0.621371 miles'],
+                    ['1 inch', '2.54 centimeters'],
+                    ['1 mile', '1.60934 kilometers'],
+                    ['1 yard', '0.9144 meters']
+                ],
+                weight: [
+                    ['1 kilogram', '2.20462 pounds'],
+                    ['1 pound', '453.592 grams'],
+                    ['1 ounce', '28.3495 grams'],
+                    ['1 gram', '0.035274 ounces'],
+                    ['1 ton', '1000 kilograms']
+                ],
+                volume: [
+                    ['1 liter', '0.264172 gallons'],
+                    ['1 gallon', '3.78541 liters'],
+                    ['1 cup', '236.588 milliliters'],
+                    ['1 tablespoon', '14.7868 milliliters'],
+                    ['1 liter', '1000 milliliters']
+                ],
+                temperature: [
+                    ['0°C', '32°F'],
+                    ['100°C', '212°F'],
+                    ['-40°C', '-40°F'],
+                    ['0K', '-273.15°C'],
+                    ['273.15K', '0°C']
+                ]
+            };
+
+            const table = document.getElementById('commonTable');
+            const conversions = commonConversionsData[type] || [];
+            table.innerHTML = conversions.map(([from, to]) =>
+                `<tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 0.75rem;">${from}</td>
+                    <td style="padding: 0.75rem; text-align: center;">${to}</td>
+                    <td style="padding: 0.75rem; text-align: right;">Quick ref</td>
+                </tr>`
+            ).join('');
+        }
+
+        // Event listeners
+        document.getElementById('fromValue').addEventListener('input', convertUnits);
+        document.getElementById('fromUnit').addEventListener('change', convertUnits);
+        document.getElementById('toUnit').addEventListener('change', convertUnits);
+
+        // Initialize
+        ToolNova.initToolPage('Unit Converter');
+        updateUnits();
+    </script>
+</body>
+
+</html>

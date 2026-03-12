@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer - ToolNova</title>
+    <meta name="description" content="Stay productive with the Pomodoro Technique. Customizable work and break interval timers with notifications.">
+    <meta name="keywords" content="Pomodoro timer, productivity timer, work timer, break timer">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .timer-container {
+            max-width: 600px;
+            margin: 3rem auto;
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 2rem 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            letter-spacing: 0.05em;
+            text-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+        }
+
+        .session-type {
+            font-size: 1.5rem;
+            color: #64748b;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        .session-type.work {
+            color: var(--secondary-color);
+        }
+
+        .session-type.break {
+            color: var(--secondary-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            transition: width 0.1s linear;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5558e3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #db2777;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+        }
+
+        .btn-outline:hover {
+            background: var(--light-bg);
+            border-color: var(--primary-color);
+        }
+
+        .settings-panel {
+            background: var(--light-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .settings-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .setting-item {
+            text-align: left;
+        }
+
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .setting-item input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .setting-item input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .stats-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .stat-value {
+            font-weight: 800;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 3.5rem;
+            }
+
+            .settings-row {
+                grid-template-columns: 1fr;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <span>⚡</span> ToolNova
+            </a>
+            <button class="nav-toggle" aria-label="Toggle menu"><span></span></button>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="section container">
+            <h1>Pomodoro Timer</h1>
+            <p class="section-subtitle">Stay productive with the Pomodoro Technique</p>
+
+            <!-- Timer Container -->
+            <div class="timer-container">
+                <!-- Timer Display -->
+                <div class="session-type work" id="sessionType">Work Session</div>
+                <div class="timer-display" id="timerDisplay">25:00</div>
+
+                <!-- Progress Bar -->
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 100%"></div>
+                </div>
+
+                <!-- Control Buttons -->
+                <div class="control-buttons">
+                    <button class="btn btn-primary" onclick="startTimer()">Start</button>
+                    <button class="btn btn-secondary" onclick="pauseTimer()">Pause</button>
+                    <button class="btn btn-outline" onclick="resetTimer()">Reset</button>
+                </div>
+
+                <!-- Statistics -->
+                <div class="stats-box">
+                    <h3 style="margin-top: 0; margin-bottom: 1rem;">Session Statistics</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Completed Sessions:</span>
+                        <span class="stat-value" id="completedSessions">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Focus Time:</span>
+                        <span class="stat-value" id="totalFocusTime">0h 0m</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Session Type:</span>
+                        <span class="stat-value" id="currentSessionType">Work</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Time Remaining:</span>
+                        <span class="stat-value" id="timeRemaining">25:00</span>
+                    </div>
+                </div>
+
+                <!-- Settings -->
+                <div class="settings-panel">
+                    <h3 style="margin-top: 0;">Timer Settings</h3>
+                    <div class="settings-row">
+                        <div class="setting-item">
+                            <label for="workDuration">Work Duration (minutes)</label>
+                            <input type="number" id="workDuration" value="25" min="1" max="60" onchange="resetTimer()">
+                        </div>
+                        <div class="setting-item">
+                            <label for="breakDuration">Break Duration (minutes)</label>
+                            <input type="number" id="breakDuration" value="5" min="1" max="60" onchange="resetTimer()">
+                        </div>
+                    </div>
+                    <div class="settings-row">
+                        <div class="setting-item">
+                            <label for="longBreak">Long Break (minutes)</label>
+                            <input type="number" id="longBreak" value="15" min="1" max="60" onchange="resetTimer()">
+                        </div>
+                        <div class="setting-item">
+                            <label style="display: flex; align-items: center;">
+                                <input type="checkbox" id="soundToggle" checked style="width: 20px; height: 20px; margin-right: 0.5rem;">
+                                Enable Sound Notifications
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preset Buttons -->
+                <div style="margin: 2rem 0;">
+                    <h3 style="margin-bottom: 1rem;">Quick Preset</h3>
+                    <div class="control-buttons">
+                        <button class="btn btn-outline" onclick="setPreset(15, 5)">15m Work</button>
+                        <button class="btn btn-outline" onclick="setPreset(25, 5)">25m Work</button>
+                        <button class="btn btn-outline" onclick="setPreset(45, 15)">45m Work</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ToolNova</h4>
+                    <p style="color: #cbd5e1;">Free online tools for productivity and everyday tasks.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../index.html#tools">Tools</a></li>
+                        <li><a href="../index.html#about">About</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ToolNova. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+
+    <script src="../js/script.js"></script>
+    <script>
+        let timerInterval = null;
+        let timeLeft = 0;
+        let totalTime = 0;
+        let isRunning = false;
+        let isWorkSession = true;
+        let sessionsCompleted = 0;
+        let totalFocusSeconds = 0;
+
+        function initTimer() {
+            const workMin = parseInt(document.getElementById('workDuration').value) || 25;
+            isWorkSession = true;
+            timeLeft = workMin * 60;
+            totalTime = workMin * 60;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+            document.getElementById('timeRemaining').textContent = display;
+
+            const progress = ((totalTime - timeLeft) / totalTime) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            document.title = `${display} - Pomodoro Timer`;
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+
+                if (timeLeft === 0) {
+                    timerComplete();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            initTimer();
+        }
+
+        function setPreset(work, br) {
+            document.getElementById('workDuration').value = work;
+            document.getElementById('breakDuration').value = br;
+            resetTimer();
+        }
+
+        function timerComplete() {
+            pauseTimer();
+
+            if (isWorkSession) {
+                sessionsCompleted++;
+                totalFocusSeconds += parseInt(document.getElementById('workDuration').value) * 60;
+                document.getElementById('completedSessions').textContent = sessionsCompleted;
+                updateTotalFocusTime();
+
+                playSound();
+                showNotification('Work session complete! Time for a break.');
+
+                // Switch to break
+                isWorkSession = false;
+                const breakMin = sessionsCompleted % 4 === 0
+                    ? parseInt(document.getElementById('longBreak').value)
+                    : parseInt(document.getElementById('breakDuration').value);
+
+                timeLeft = breakMin * 60;
+                totalTime = breakMin * 60;
+                document.getElementById('sessionType').textContent = 'Break Time';
+                document.getElementById('sessionType').classList.remove('work');
+                document.getElementById('currentSessionType').textContent = 'Break';
+            } else {
+                playSound();
+                showNotification('Break complete! Ready for another work session?');
+
+                // Switch to work
+                isWorkSession = true;
+                const workMin = parseInt(document.getElementById('workDuration').value);
+                timeLeft = workMin * 60;
+                totalTime = workMin * 60;
+                document.getElementById('sessionType').textContent = 'Work Session';
+                document.getElementById('sessionType').classList.add('work');
+                document.getElementById('currentSessionType').textContent = 'Work';
+            }
+
+            updateDisplay();
+        }
+
+        function updateTotalFocusTime() {
+            const hours = Math.floor(totalFocusSeconds / 3600);
+            const minutes = Math.floor((totalFocusSeconds % 3600) / 60);
+            document.getElementById('totalFocusTime').textContent = `${hours}h ${minutes}m`;
+        }
+
+        function playSound() {
+            if (!document.getElementById('soundToggle').checked) return;
+
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initTimer();
+        });
+    </script>
+</body>
+
+</html>
